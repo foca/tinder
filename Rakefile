@@ -26,7 +26,6 @@ hoe = Hoe.new('tinder', ENV['VERSION'] || Tinder::VERSION::STRING) do |p|
   p.url = 'http://tinder.rubyforge.org'
   p.test_globs = ["test/**/*_test.rb"]
   p.changes = p.paragraphs_of('CHANGELOG.txt', 0..1).join("\n\n")
-  p.extra_deps << ['activesupport']
   p.extra_deps << ['hpricot']
 end
 

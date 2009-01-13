@@ -7,3 +7,4 @@ lib/tinder.rb
 lib/tinder/campfire.rb
 lib/tinder/room.rb
 lib/tinder/version.rb
+lib/core_ext/object.rb
