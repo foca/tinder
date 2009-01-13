@@ -11,7 +11,7 @@ module Tinder
     
     # Join the room. Pass +true+ to join even if you've already joined.
     def join(force = false)
-      @room = returning(get("room/#{id}")) do |room|
+      @room = (get("room/#{id}")).tap do |room|
         raise Error, "Could not join room" unless verify_response(room, :success)
         @membership_key = room.body.scan(/\"membershipKey\": \"([a-z0-9]+)\"/).to_s
         @user_id = room.body.scan(/\"userID\": (\d+)/).to_s
@@ -25,7 +25,7 @@ module Tinder
     
     # Leave a room
     def leave
-      returning verify_response(post("room/#{id}/leave"), :redirect) do
+      verify_response(post("room/#{id}/leave"), :redirect).tap do
         @room, @membership_key, @user_id, @last_cache_id, @timestamp, @idle_since = nil
       end
     end
@@ -84,7 +84,7 @@ module Tinder
     end
 
     def ping(force = false)
-      returning verify_response(post("room/#{id}/tabs", { }, :ajax => true), :success) do
+      verify_response(post("room/#{id}/tabs", { }, :ajax => true), :success).tap do
         @idle_since = Time.now
       end if @idle_since < 1.minute.ago || force
     end
@@ -176,7 +176,7 @@ module Tinder
   protected
     
     def messages
-      returning [] do |messages|
+      [].tap do |messages|
         response = post("poll.fcgi", {:l => @last_cache_id, :m => @membership_key,
           :s => @timestamp, :t => "#{Time.now.to_i}000"}, :ajax => true)
         if response.body.length > 1

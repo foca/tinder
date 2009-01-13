@@ -52,7 +52,7 @@ module Tinder
     end
   
     def logout
-      returning verify_response(get("logout"), :redirect) do |result|
+      verify_response(get("logout"), :redirect).tap do |result|
         @logged_in = !result
       end
     end
@@ -137,7 +137,7 @@ module Tinder
 
     def post(path, data = {}, options = {})
       perform_request(options) do
-        returning Net::HTTP::Post.new(url_for(path)) do |request|
+        Net::HTTP::Post.new(url_for(path)).tap do |request|
           request.add_field 'Content-Type', 'application/x-www-form-urlencoded'
           request.set_form_data flatten(data)
         end
@@ -149,7 +149,7 @@ module Tinder
     end
   
     def prepare_request(request, options = {})
-      returning request do
+      request.tap do
         request.add_field 'User-Agent', "Tinder/#{Tinder::VERSION::STRING} (http://tinder.rubyforge.org)"
         request.add_field 'Cookie', @cookie if @cookie
         if options[:ajax]
@@ -164,7 +164,7 @@ module Tinder
       http = @http.new(uri.host, uri.port)
       http.use_ssl = ssl?
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE if ssl?
-      @response = returning http.request(@request) do |response|
+      @response = http.request(@request).tap do |response|
         @cookie = response['set-cookie'] if response['set-cookie']
       end
     end
