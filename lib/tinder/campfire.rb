@@ -171,8 +171,8 @@ module Tinder
   
     # flatten a nested hash (:room => {:name => 'foobar'} to 'user[name]' => 'foobar')
     def flatten(params)
-      params = params.dup
-      params.stringify_keys!.each do |k,v| 
+      params = params.inject({}) {|hash,(k,v)| hash[k.to_s] = v; hash }
+      params.each do |k,v|
         if v.is_a? Hash
           params.delete(k)
           v.each {|subk,v| params["#{k}[#{subk}]"] = v }
